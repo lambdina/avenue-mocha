@@ -10,6 +10,7 @@ export interface IProductProps {
     numberOfIce?: number,
     numberOfSugar?: number,
     size?: number,
+    nutritionInfo?: string,
     hasBeenSelected?: React.Dispatch<React.SetStateAction<boolean>>
 }
 export const products: Array<IProductProps> = [
@@ -20,7 +21,8 @@ export const products: Array<IProductProps> = [
         price: '$48',
         imageSrc: 'https://www.starbucks.fr/sites/starbucks-fr/files/styles/c04_image_text_grid_600x600/public/2020-07/Starbucks_FR_Deliveroo_1200x1200_Hot_Drinks_Caffe_Latte.jpg.webp?itok=sqeqXDrx',
         imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.',
-        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up."
+        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up.",
+        nutritionInfo: "250 calories, 23g sugar, 9g fat"
     },
     {
         id: "2",
@@ -29,7 +31,8 @@ export const products: Array<IProductProps> = [
         price: '$35',
         imageSrc: 'https://www.starbucks.fr/sites/starbucks-fr/files/styles/c04_image_text_grid_600x600/public/2020-07/Starbucks_FR_Deliveroo_1200x1200_Iced_Latte_Glace.jpg.webp?itok=DdrMeD-a',
         imageAlt: 'Olive drab green insulated bottle with flared screw lid and flat top.',
-        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up."
+        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up.",
+        nutritionInfo: "130 calories, 11g sugar, 4.5g fat"
     },
     {
         id: "3",
@@ -38,7 +41,8 @@ export const products: Array<IProductProps> = [
         price: '$89',
         imageSrc: 'https://www.starbucks.fr/sites/starbucks-fr/files/styles/c04_image_text_grid_600x600/public/2020-09/Starbucks_FR_Website_600x600_Caramel_Macchiato.jpg.webp?itok=MyjUAqoJ',
         imageAlt: 'Person using a pen to cross a task off a productivity paper card.',
-        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up."
+        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up.",
+        nutritionInfo: "250 calories, 33g sugar, 7g fat"
     },
     {
         id: "4",
@@ -47,7 +51,8 @@ export const products: Array<IProductProps> = [
         price: '$35',
         imageSrc: 'https://www.starbucks.fr/sites/starbucks-fr/files/styles/c04_image_text_grid_600x600/public/2020-09/Starbucks_FR_Website_600x600_Iced_Caramel_Macchiato.jpg.webp?itok=4ER9psWg',
         imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up."
+        description: "Our dark, rich espresso balanced with steamed milk and a light layer of foam. A perfect milk-forward warm-up.",
+        nutritionInfo: "250 calories, 33g sugar, 7g fat"
     },
     // More products...
 ]
