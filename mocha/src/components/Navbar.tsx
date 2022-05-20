@@ -23,7 +23,7 @@ const Navbar: React.FC <NavbarProps> = ({ menuOpen, setMenuOpen }) => (
         {/* App header */}
         <div className="flex items-center space-x-2.5">
             <img src="https://www.apnavacancy.com/wp-content/uploads/2021/09/Starbucks-Jobs.png" className="h-12 w-12 object-cover" />
-            <a href="#home" className="text-xl font-bold no-underline text-gray-800 hover:text-gray-600">Avenue Mocha</a>
+            <a href="/" className="text-xl font-bold no-underline text-gray-800 hover:text-gray-600">Avenue Mocha</a>
         </div>
         {/* Links shown in a row on larger screens */}
         <nav className="hidden md:block space-x-6">
@@ -36,8 +36,8 @@ const Navbar: React.FC <NavbarProps> = ({ menuOpen, setMenuOpen }) => (
 );
 
 // Page names that can be shared between mobile menu and navbar
-const pages = ['Login', 'Cart'];
-const navLinks = pages.map(page => <a className="no-underline text-gray-800 font-semibold hover:text-gray-600" href={`#${page}`}>{page}</a>);
+const pages = ['Login', 'Checkout'];
+const navLinks = pages.map(page => <a className="no-underline text-gray-800 font-semibold hover:text-gray-600" href={`${page}`}>{page}</a>);
 
 const MenuAlt4Svg: React.FC<{menuOpen: boolean}> = ({ menuOpen }) => (
     // Added a fun transition to the icon when clicked

@@ -4,7 +4,6 @@ import {Product} from "./Product";
 import {IProductProps, products} from "../types/Product.types";
 import {Outlet} from "react-router-dom";
 
-
 export function ProductList() {
     return (
         <div className="bg-white">
