@@ -6,6 +6,7 @@ import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {TextField} from "@mui/material";
 import {Order} from "./Order";
 import EmptyCheckout from "../assets/emptyCheckout.svg";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 export function Checkout() {
 
@@ -53,7 +54,10 @@ const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
                     <div className="mt-4">
                         <div className="w-full">
                             <label htmlFor="Address" className="block mb-3 font-semibold text-gray-500">Mocha's Address</label>
-                            <p>12 rue bellecour, 69002, Lyon</p>
+                            <div className="flex inline space-x-2">
+                                <LocationOnIcon style={{color: "#166534"}}/>
+                                <p>12 rue bellecour, 69002, Lyon</p>
+                            </div>
                         </div>
                     </div>
 

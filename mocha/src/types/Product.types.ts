@@ -10,6 +10,7 @@ export interface IProductProps {
     numberOfIce?: number,
     numberOfSugar?: number,
     size?: number,
+    storeAddres?: string,
     nutritionInfo?: string,
     hasBeenSelected?: React.Dispatch<React.SetStateAction<boolean>>
 }
