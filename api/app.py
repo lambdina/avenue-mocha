@@ -13,6 +13,7 @@ from sqlalchemy import ForeignKey, Table, create_engine
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.declarative import declarative_base
+from authlib.integrations.flask_client import OAuth
 
 Base = declarative_base()
 
@@ -27,6 +28,7 @@ CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 auth = HTTPBasicAuth()
+oauth = OAuth(app)
 
 engine = create_engine('sqlite:///db.sqlite3', connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
@@ -51,7 +53,7 @@ class User(Base):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, expires_in=6000000000000000000000):
+    def generate_auth_token(self, expires_in=600000):
         return jwt.encode(
             {'id': self.id, 'exp': time.time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
@@ -136,6 +138,87 @@ def new_user():
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
+@app.route('/facebook/')
+def facebook():
+    # Facebook Oauth Config
+    FACEBOOK_CLIENT_ID = "1066263394311051"
+    FACEBOOK_CLIENT_SECRET = '5a68c4569231878ed1d58803bf56d578'
+    oauth.register(
+        name='facebook',
+        client_id=FACEBOOK_CLIENT_ID,
+        client_secret=FACEBOOK_CLIENT_SECRET,
+        access_token_url='https://graph.facebook.com/oauth/access_token',
+        access_token_params=None,
+        authorize_url='https://www.facebook.com/dialog/oauth',
+        authorize_params=None,
+        api_base_url='https://graph.facebook.com/',
+        client_kwargs={'scope': 'email'},
+    )
+    redirect_uri = url_for('facebook_auth', _external=True)
+    return oauth.facebook.authorize_redirect(redirect_uri)
+
+
+@app.route('/facebook/auth/')
+def facebook_auth():
+    token = oauth.facebook.authorize_access_token()
+    resp = oauth.facebook.get(
+        'https://graph.facebook.com/me?fields=id,name,email,picture{url}')
+    profile = resp.json()
+
+    print("Facebook User ", profile)
+    user = User.query.filter_by(email=profile.get("email")).first()
+    if user is None:
+        firstName, lastName = profile.get("name").split()
+        user = User(email=profile.get("email"), firstName=firstName, lastName=lastName, avatar_path=profile["picture"]["data"]["url"])
+        db.session.add(user)
+        db.session.commit()
+    localToken = user.generate_auth_token(600000)
+
+    return jsonify("token", localToken.decode('ascii'))
+
+@app.route('/google/')
+def google():
+
+    # Google Oauth Config
+    # Get client_id and client_secret from environment variables
+    # For developement purpose you can directly put it
+    # here inside double quotes
+    GOOGLE_CLIENT_ID = "427462438516-p75iidujcpba0kb2nocek901j7v2937j.apps.googleusercontent.com"
+    GOOGLE_CLIENT_SECRET = "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"
+
+    CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+    oauth.register(
+        name='google',
+        client_id=GOOGLE_CLIENT_ID,
+        client_secret=GOOGLE_CLIENT_SECRET,
+        server_metadata_url=CONF_URL,
+        client_kwargs={
+            'scope': 'openid email profile'
+        }
+    )
+
+    # Redirect to google_auth function
+    redirect_uri = url_for('google_auth', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+@app.route('/google/auth/')
+def google_auth():
+    token = oauth.google.authorize_access_token()
+    userInfo = oauth.google.parse_id_token(token, None)
+
+    user = User.query.filter_by(email=userInfo.get("email")).first()
+
+    if not user:
+        user = User(email=userInfo.get("email"),
+                    firstName=userInfo.get("family_name"), lastName=userInfo.get("given_name"),
+                    avatar_path=userInfo["picture"])
+        db.session.add(user)
+        db.session.commit()
+    localToken = user.generate_auth_token(600000)
+
+    return jsonify("token", localToken.decode('ascii'))
+
+
 @app.route('/api/users', methods=['GET'])
 @auth.login_required
 def get_info_current_user():
@@ -149,7 +232,6 @@ def get_info_current_user():
 def update_user():
 
     form = request.form.to_dict()
-    print("BONJOUR")
 
     user = User.query.get(form.get("id"))
     user.firstName = form["firstName"] if form.get("firstName") else user.firstName
@@ -160,8 +242,6 @@ def update_user():
     if request.files.get("avatar_path"):
         file = request.files["avatar_path"]
         filename = os.path.join('static', f"{uuid4()}_{file.filename}")
-
-        print("AVATAAAAR", filename)
 
         file.save(filename)
         user.avatar_path = filename
@@ -183,8 +263,8 @@ def get_user(id):
 @app.route('/api/token')
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    token = g.user.generate_auth_token(600000)
+    return jsonify({'token': token.decode('ascii'), 'duration': 600000})
 
 
 @app.route('/api/resource')

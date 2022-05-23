@@ -56,10 +56,12 @@ export function Checkout() {
                 }
             </div>
             {isOrderSubmitted === 2 &&
-                <div className="lg:flex justify-center items-center">
-                    <h2 className="text-3xl font-medium">Succesfully submitted !</h2>
-                    <p className="font-medium text-emerald-800">Thanks for choosing Mocha! You can now pick up your order in 12 minutes.</p>
-                    <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
+                <div className="grid grid-cols-1 justify-center place-items-center space-y-4">
+                    <h2 className="justify-self-center text-xl lg:text-3xl font-medium">Successfully submitted !</h2>
+                    <p className="font-medium text-emerald-800 px-4">Thanks for choosing Mocha! You can now pick up your order in 12 minutes.</p>
+                    <div className="lg:pt-6">
+                        <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
+                    </div>
                 </div>
             }
         </div>
