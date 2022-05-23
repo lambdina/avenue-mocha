@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  api:
+    build: api
+    volumes:
+      - ./api:/backend
+    environment:
+      - FLASK_APP=app.py
+    ports:
+      - "5000:5000"
+
+  client:
+    build:
+      context: ./mocha
+    volumes:
+      - ./mocha:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+
+volumes:
+  node-modules:
