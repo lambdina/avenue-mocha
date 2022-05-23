@@ -51,7 +51,7 @@ class User(Base):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, expires_in=60000000000):
+    def generate_auth_token(self, expires_in=6000000000000000000000):
         return jwt.encode(
             {'id': self.id, 'exp': time.time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
@@ -248,7 +248,7 @@ def get_all_orders():
 
 
 if __name__ == '__main__':
-    # Base.metadata.drop_all(engine)
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     migrate.init_app(app, db)
     app.run(debug=True)

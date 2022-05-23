@@ -188,7 +188,6 @@ const SummaryOrder: React.FC<{storedCommands: Array<ICustomProductProps>, setSto
 
 export function Empty() {
     return (
-
         <div className="flex flex-col justify-center items-center md:space-y-12 space-y-8">
             <h2 className="text-gray-800 font-bold text-center text-2xl">Looks like someone needs a coffee</h2>
             <img className="md:w-1/4 w-full"

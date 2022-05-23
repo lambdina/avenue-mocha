@@ -31,9 +31,10 @@ export const Login: React.FC<{}> = () => {
 
         const [emailChanged, setEmail] = useState("");
         const [passwordChanged, setPassword] = useState("");
+        const [errors, setLoginErrors] = useState(false);
         const navigate = useNavigate();
 
-        const handleSubmit = (e: any) => { // TODO: alert with successfully register
+        const handleSubmit = (e: any) => {
 
             login({email: emailChanged, password: passwordChanged})
                 .then((response: AxiosResponse) => {
@@ -46,11 +47,25 @@ export const Login: React.FC<{}> = () => {
                             navigate("/");
                         }).catch ((err: any) => {console.log("Unable to retrieve user info ; refresh token.")})
                 })
-                .catch((err: any) => {console.log("oh no", err);})
+                .catch((err: any) => {setLoginErrors(true);})
         }
 
         return (
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20 space-y-6">
+                {errors &&
+                    <div className="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                        role="alert">
+                        <svg className="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd"
+                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                  clipRule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <span className="font-medium">Oops</span> Something went wrong with your log in information. Please try again.
+                        </div>
+                    </div>
+                }
 
                 <FacebookButton/>
 
