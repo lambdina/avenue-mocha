@@ -48,18 +48,20 @@ export function Checkout() {
                 {!isOrderSubmitted && !storedCommands.length &&
                     <Empty />
                 }
-                {isOrderSubmitted === 2 &&
-                    <div className="lg:flex justify-center items-center">
-                        <h2 className="text-3xl">Succesfully submitted !</h2>
-                        <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
-                    </div>
-                }
+
                 {isOrderSubmitted === 3 &&
                     <>
                         Sorry, something went wrong... :/
                     </>
                 }
             </div>
+            {isOrderSubmitted === 2 &&
+                <div className="lg:flex justify-center items-center">
+                    <h2 className="text-3xl font-medium">Succesfully submitted !</h2>
+                    <p className="font-medium text-emerald-800">Thanks for choosing Mocha! You can now pick up your order in 12 minutes.</p>
+                    <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
+                </div>
+            }
         </div>
     );
 }
@@ -184,11 +186,11 @@ const SummaryOrder: React.FC<{storedCommands: Array<ICustomProductProps>, setSto
     );
 }
 
-function Empty() {
+export function Empty() {
     return (
 
         <div className="flex flex-col justify-center items-center md:space-y-12 space-y-8">
-            <h2 className="text-gray-800 font-bold text-center md:text-4xl text-2xl">Looks like someone needs a coffee</h2>
+            <h2 className="text-gray-800 font-bold text-center text-2xl">Looks like someone needs a coffee</h2>
             <img className="md:w-1/4 w-full"
                  src={EmptyCheckout}/>
             <a className="text-gray-600 hover:text-green-800 focus:text-green-800"

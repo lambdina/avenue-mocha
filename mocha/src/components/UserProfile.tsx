@@ -9,6 +9,7 @@ import {getUserOrders} from "../services/order.services";
 import {ICustomProductProps} from "../types/Product.types";
 import {API_URL} from "../services/api.services.url";
 import axios, {AxiosResponse} from "axios";
+import {Empty} from "./Checkout";
 
 export function UserProfile() {
 
@@ -163,6 +164,7 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
                 }
             </div>
         }
+        {!isEditingMode && !storedCommands.length && <Empty />}
 
     </div>
             </>
