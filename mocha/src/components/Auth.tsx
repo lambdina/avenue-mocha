@@ -1,4 +1,4 @@
-import {FunctionComponent, useState} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import {Input} from "./Input";
 import {getUserInfo, login, register} from "../services/user.services";
 import {AxiosResponse} from "axios";
@@ -68,6 +68,7 @@ export const Login: React.FC<{}> = () => {
                 }
 
                 <FacebookButton/>
+                <GoogleButton />
 
                 <div
                     className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
@@ -144,6 +145,7 @@ export const Register: React.FC<{}> = () => {
                     </div>
                 }
                 <FacebookButton/>
+                <GoogleButton />
 
                 <div
                     className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
@@ -189,13 +191,35 @@ export const Register: React.FC<{}> = () => {
     );
 }
 
+export function FacebookLogin() {
+
+    const [retries, setRetries] = useState(0);
+    const max_retries = 2;
+
+    useEffect(() => {
+
+        if (retries < max_retries) {
+
+
+
+            setRetries((prev: number) => prev + 1);
+        }
+
+    }, [retries, setRetries, max_retries])
+
+    return (
+      <>
+      </>
+    );
+}
+
 export function FacebookButton() {
     return (
 
         <a
             className="px-2 py-3 text-white font-medium text-sm leading-snug uppercase rounded-full shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out flex justify-center items-center mb-3"
             style={{backgroundColor: "#3b5998"}}
-            href="#!"
+            href="http://localhost:5000/facebook"
             role="button"
             data-mdb-ripple="true"
             data-mdb-ripple-color="light"
@@ -211,6 +235,22 @@ export function FacebookButton() {
                 />
             </svg>
             Continue with Facebook
+        </a>
+    );
+}
+
+export function GoogleButton() {
+    return (
+
+        <a
+            className="px-2 py-3 text-slate-800 bg-white font-medium text-sm leading-snug uppercase rounded-full shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out flex justify-center items-center mb-3"
+            href="http://localhost:5000/google"
+            role="button"
+            data-mdb-ripple="true"
+            data-mdb-ripple-color="light"
+        >
+        <img className="w-3.5 h-3.5 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png"/>
+            Continue with Google
         </a>
     );
 }
