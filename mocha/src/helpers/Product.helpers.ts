@@ -4,12 +4,12 @@ export function getStoredCommandsWithId(id: string | undefined): Array<ICustomPr
     if (!id) return [];
     const commands: Array<ICustomProductProps> = getStoredCommands();
 
-    return commands.filter((product) => (product.id === id))
+    return commands.filter((product) => (product.productId === id))
 
 }
 
 export function getStoredCommands(): Array<ICustomProductProps> {
-    const commandsString: string | null = localStorage.getItem("commands");
+    const commandsString: string | null = localStorage.getItem("orders");
     if (!commandsString) return [];
     return JSON.parse(commandsString);
 

@@ -33,7 +33,7 @@ const ProductSize: React.FC<{callback: any}> = ({callback}) => {
                         {index !== 2 &&
                             <input className="sr-only peer" name="size" type="radio" value="s" onClick={setSize}/>}
                         <div
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-gray-700 peer-checked:font-semibold peer-checked:bg-green-800 peer-checked:text-white">
+                            className="w-9 h-9 rounded-full hover:border-2 hover:border-emerald-800 hover:text-emerald-800 flex items-center justify-center text-gray-700 peer-checked:font-semibold peer-checked:bg-emerald-800 peer-checked:text-white">
                             {stringSize}
                         </div>
                     </label>
@@ -73,7 +73,7 @@ const ProductDetail = () => {
         setPriceNumber((prev: number) => prev + (+product.price * quantity));
         setTotalQuantity((prev: number) => prev + quantity);
         const customProduct: ICustomProductProps = {
-            id: product.id,
+            productId: product.id,
             isCold: isCold,
             isCreamy: isCreamy,
             quantity: quantity,
@@ -98,8 +98,8 @@ const ProductDetail = () => {
         setProductSiblings(newProductsSiblings);
 
         let storedCommands: Array<ICustomProductProps> = getStoredCommands();
-        storedCommands = storedCommands.filter((order) => order.id !== customProduct.id); // avoid duplicates
-        localStorage.setItem("commands", JSON.stringify(newProductsSiblings.concat(storedCommands))); // cause here we joined the arrays
+        storedCommands = storedCommands.filter((order) => order.productId !== customProduct.productId); // avoid duplicates
+        localStorage.setItem("orders", JSON.stringify(newProductsSiblings.concat(storedCommands))); // cause here we joined the arrays
 
         setSubmit(true);
     }
@@ -112,7 +112,7 @@ const ProductDetail = () => {
                 <div className="md:overflow-y-auto w-full px-4 sm:w-full  lg:w-8/12 md:h-8/12 lg:w-6/12 justify-items-start md:space-y-8 space-y-4">
                     <div className="flex justify-between md:py-6 py-4">
                         <h2 className="text-slate-800 font-bold lg:text-4xl text-3xl lg:leading-9 leading-7 mt-4">{product.name}</h2>
-                        <p className="text-slate-800 font-semibold lg:text-2xl text-xl lg:leading-6 leading-5 mt-6 ">{(+product.price * quantity).toString()}€</p>
+                        <p className="text-emerald-800 font-semibold lg:text-2xl text-xl lg:leading-6 leading-5 mt-6 ">{(+product.price * quantity).toString()}€</p>
                     </div>
 
                     <div>
@@ -144,14 +144,14 @@ const ProductDetail = () => {
 
                     {!isSubmit && totalQuantity <= 1 &&
                         <button
-                            className="bg-gray-800 focus:ring-2 hover:bg-green-800  focus:bg-green-800 font-medium text-base rounded-full leading-4 text-white w-full py-5 lg:mt-12 mt-6"
+                            className="bg-gray-800 focus:ring-2 hover:bg-emerald-800  focus:bg-emerald-800 font-medium text-base rounded-full leading-4 text-white w-full py-5 lg:mt-12 mt-6"
                             onClick={handleSubmit}>
                             Add to shopping bag
                         </button>
                     }
                     {(isSubmit || totalQuantity > 1) &&
                         <button
-                            className="bg-green-800 focus:ring-2 hover:bg-green-800 focus:bg-green-800 font-medium text-base rounded-full leading-4 text-white w-full py-5 lg:mt-12 mt-6"
+                            className="bg-emerald-800 focus:ring-2 hover:bg-emerald-800 focus:bg-emerald-800 font-medium text-base rounded-full leading-4 text-white w-full py-5 lg:mt-12 mt-6"
                             onClick={handleSubmit}>
                             Successfully added {totalQuantity - 1} {product.name} ({priceNumber.toString()} €)
                         </button>

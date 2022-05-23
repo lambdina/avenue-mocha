@@ -1,9 +1,14 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CoffeeCup from "../assets/CoffeeCup.svg";
 import {getStoredCommands} from "../helpers/Product.helpers";
 import {Order, TinyOrder} from "./Order";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import {Input} from "./Input";
+import {dumpUser} from "../services/user.services";
+import {getUserOrders} from "../services/order.services";
+import {ICustomProductProps} from "../types/Product.types";
+import {API_URL} from "../services/api.services.url";
+import axios, {AxiosResponse} from "axios";
 
 export function UserProfile() {
 
@@ -21,14 +26,52 @@ export function UserProfile() {
 
 const EditingMode: React.FC<{setEditingMode: any}> = ({setEditingMode}) => {
 
-    // TOOD: put user value by default
-    const [avatar, setAvatar] = useState("");
-    const [emailChanged, setEmail] = useState("");
+    const user = dumpUser();
+
+    const [avatar, setAvatar] = useState<File & { lastModifiedDate: Date }>();
+    const [emailChanged, setEmail] = useState<string | Blob>("");
     const [passwordChanged, setPassword] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [firstName, setFirstName] = useState<string | Blob>("");
+    const [lastName, setLastName] = useState<string | Blob>("");
 
     const handleSubmit = (e: any) => {
+        if (!user)
+            return (
+                <>
+                    404, you need to be logged in to perform this action.
+                </>
+            );
+
+        let headers = {}
+        let formData = new FormData();
+        formData.append("id", user.id as unknown as Blob)
+        formData.append("email", emailChanged as Blob)
+        formData.append("firstName", firstName as Blob)
+        formData.append("lastName", lastName as Blob)
+        formData.append("password", passwordChanged)
+
+        if (avatar) {
+            formData.append("avatar_path", avatar as Blob)
+            headers = {"Content-Type": "multipart/form-data"}
+        }
+
+        const userToken = localStorage.getItem("token");
+        if (!userToken) return (
+            <>
+                404, you need to be logged in to perform this action.
+            </>
+        );
+
+
+        axios.put(API_URL + "/users", formData,
+            {
+                auth: {
+                    username: userToken,
+                    password: "x" // We don't care
+                },
+                headers: headers
+            }
+        ).then((response: AxiosResponse) => { console.log(response.data); localStorage.setItem("user", JSON.stringify(response.data)); })
         setEditingMode(false);
     }
 
@@ -40,12 +83,13 @@ const EditingMode: React.FC<{setEditingMode: any}> = ({setEditingMode}) => {
                     <Input isRequired={false} label={"First name"} onChange={(e: any)=> {setFirstName(e.target.value);}} type={"text"} />
                     <Input isRequired={false} label={"Last name"} onChange={(e: any)=> {setLastName(e.target.value);}} type={"text"} />
                 </div>
-                <UploadFileButton label={"Change avatar"} onChange={(e: any) => {setAvatar(e.target.value);}} />
+                <UploadFileButton label={"Change avatar"} onChange={(e: any) => {setAvatar(e.target.files[0]);}} />
                 <Input isRequired={false} label={"New Email"} type={"email"} onChange={(e: any) => {setEmail(e.target.value);}} />
-                <Input isRequired={false} label={"New Password"} type={"password"} onChange={(e: any) => {setEmail(e.target.value);}} />
+                <Input isRequired={false} label={"New Password"} type={"password"} onChange={(e: any) => {setPassword(e.target.value);}} />
                 <button
+                    type="button"
                     onClick={handleSubmit}
-                    className="justify-self-center bg-green-800 focus:ring-2 hover:bg-green-900 focus:bg-green-900 font-medium text-base rounded-full leading-4 text-white px-6 py-5 lg:mt-12 mt-6">
+                    className="justify-self-center bg-emerald-800 focus:ring-2 hover:bg-emerald-900 focus:bg-emerald-900 font-medium text-base rounded-full leading-4 text-white px-6 py-5 lg:mt-12 mt-6">
                     Done
                 </button>
             </form>
@@ -56,30 +100,51 @@ const EditingMode: React.FC<{setEditingMode: any}> = ({setEditingMode}) => {
 const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({isEditingMode, setEditingMode}) => {
 
 
-    const storedCommands = getStoredCommands().slice(0, 5);
+    const [storedCommands, setStoredCommands] = useState([]);
+    const [hasAtLeastOne, setHowMany] = useState(1);
+    const userToken = localStorage.getItem("token");
+    const user = dumpUser();
+
+    useEffect(() => {
+        if (!userToken || !hasAtLeastOne) return;
+        getUserOrders(userToken)
+            .then((response) => {
+                setStoredCommands(response.data.orders);
+                setHowMany(storedCommands.length);
+            })
+    }, [userToken, hasAtLeastOne, setHowMany, setStoredCommands, storedCommands]);
+
+    if (!userToken || !user)
+        return (
+            <>
+                404, Not connected.
+            </>
+        );
+
+
 
     return (
         <>
         <div className="grid grid-cols-1 space-y-4 relative shadow-inner shadow-lg rounded-lg w-5/6 md:w-5/6 lg:w-5/6 xl:w-3/6 mx-auto">
             <div className="flex justify-center">
                 <img
-                    src="https://scontent.fotp3-1.fna.fbcdn.net/v/t1.6435-9/175889300_2909358829319917_899035180950984171_n.jpg?_nc_cat=107&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=MaOc2WiX9w0AX_xiqmh&_nc_ht=scontent.fotp3-1.fna&oh=00_AT85mEIpqHX5yThEAWoCZCt2PAnO-SS4M0yKFm9Cjti2zg&oe=628D39CC"
+                    src={user.avatar_path}
                     alt=""
                     className="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
             </div>
 
-            <div className="flex justify-self-end pr-4 font-semibold text-gray-800 hover:text-green-800 transition duration-200 transform hover:scale-110"
+            <div className="flex justify-self-end pr-4 font-semibold text-gray-800 hover:text-emerald-800 transition duration-200 transform hover:scale-110"
                  onClick={(e: any) => {setEditingMode((prev: boolean) => !prev)}}>
-                <ModeEditIcon style={{color: "#166534"}} />
+                <ModeEditIcon style={{color: "#00704A"}} />
             </div>
 
             <div className="mt-16">
-                <h1 className="font-bold text-center text-3xl text-gray-800">Pantazi Software</h1>
-                <p className="text-center text-sm text-green-800 font-medium">pantazi@spftware.com</p>
+                <h1 className="font-bold text-center text-3xl text-gray-800">{user.firstName} {user.lastName}</h1>
+                <p className="text-center text-sm text-emerald-800 font-medium">{user.email}</p>
             </div>
 
             <div className="flex justify-center items-center space-x-2.5 pb-4">
-                <p>3</p>
+                <p>{storedCommands.length}</p>
                 <img src={CoffeeCup} />
             </div>
 
@@ -88,11 +153,11 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
         {!isEditingMode && storedCommands.length > 0 &&
             <div className="grid grid-cols-1 p-4">
                 <p className="justify-self-center lg:pb-8 text-xl items-center font-semibold text-gray-800">Last orders</p>
-                <Order {...storedCommands[0]} />
+                <Order readOnlyMode={true} {...storedCommands[0]} />
                 {storedCommands.length > 1 &&
                     <ul className="">
-                        {storedCommands.map((order) => (
-                            <TinyOrder id={order.id} />
+                        {storedCommands.map((order: ICustomProductProps) => (
+                            <TinyOrder id={order.productId} />
                         ))}
                     </ul>
                 }

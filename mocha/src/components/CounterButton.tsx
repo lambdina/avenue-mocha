@@ -13,13 +13,13 @@ export const CounterButton: React.FC <{callback: any, initial: number}> = ({call
     return (
         <div className="flex flex-row justify-between">
             <div className="flex">
-                <span onClick={minusCount} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 rounded-full cursor-pointer border border-2 border-green-800 w-7 h-7 flex items-center justify-center pb-1 text-green-800">
+                <span onClick={minusCount} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 rounded-full cursor-pointer border border-2 border-emerald-800 w-7 h-7 flex items-center justify-center pb-1 text-emerald-800">
                     -
                 </span>
                 <input id="counter" aria-label="input" className="h-full text-center w-7 h-7 pb-1 text-gray-600" type="text"
                        value={initial.toString()}
                        onChange={(e) => e.target.value} />
-                <span onClick={addCount} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 rounded-full cursor-pointer border border-2 border-green-800 w-7 h-7 flex items-center justify-center pb-1 text-green-800">
+                <span onClick={addCount} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 rounded-full cursor-pointer border border-2 border-emerald-800 w-7 h-7 flex items-center justify-center pb-1 text-emerald-800">
                     +
                 </span>
             </div>

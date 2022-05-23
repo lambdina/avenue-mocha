@@ -16,7 +16,7 @@ export interface IProductProps {
 }
 
 export interface ICustomProductProps {
-    id: string,
+    productId: string,
     isCold: boolean,
     isCreamy: boolean,
     quantity: number,
@@ -31,7 +31,7 @@ export interface ICustomProductProps {
 
 export function areProductsEqual(a: ICustomProductProps, b: ICustomProductProps) {
     return (
-        a.id === b.id &&
+        a.productId === b.productId &&
         a.isCold === b.isCold &&
         a.isCreamy === b.isCreamy &&
         a.nbSugars === b.nbSugars &&

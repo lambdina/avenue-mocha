@@ -7,33 +7,76 @@ import {TextField} from "@mui/material";
 import {Order} from "./Order";
 import EmptyCheckout from "../assets/emptyCheckout.svg";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import {postOrder} from "../services/order.services";
+import {AxiosResponse} from "axios";
+import {dumpUser} from "../services/user.services";
 
 export function Checkout() {
 
-    const storedCommands: Array<ICustomProductProps> = getStoredCommands();
+    const [storedCommands, setStoredCommand] = useState(getStoredCommands());
+    const [isOrderSubmitted, setOrder] = useState(0);
+    const userToken = localStorage.getItem("token");
 
-    //TODO: https://stackoverflow.com/questions/35537229/how-can-i-update-the-parents-state-in-react
+    const submitOrder = (e: any) => {
+
+        if (!userToken)
+            return (
+                <>
+                    404, you should be logged in for this operation.
+                </>
+            )
+
+        postOrder(userToken, storedCommands)
+            .then((response: AxiosResponse) => {
+                setOrder(2); // successfully submitted, no time for enum bruh
+                localStorage.removeItem("orders");
+            }).catch((err: any) => {
+                setOrder(3);
+        })
+
+    }
 
     return (
         <div>
             <div className="container p-12 mx-auto">
-                {storedCommands.length > 0 &&
+                {!isOrderSubmitted && storedCommands.length > 0 &&
                     <div className="flex flex-col w-full px-0 mx-auto lg:flex-row lg:space-x-8">
-                        <PickUpInfo totalPrice={getTotal(storedCommands)} />
-                        <SummaryOrder {...storedCommands} />
+                        <PickUpInfo submitOrder={submitOrder} totalPrice={getTotal(storedCommands)} />
+                        <SummaryOrder isReadOnlyMode={!!isOrderSubmitted} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
                     </div>
                 }
-                {!storedCommands.length &&
+                {!isOrderSubmitted && !storedCommands.length &&
                     <Empty />
+                }
+                {isOrderSubmitted === 2 &&
+                    <div className="lg:flex justify-center items-center">
+                        <h2 className="text-3xl">Succesfully submitted !</h2>
+                        <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
+                    </div>
+                }
+                {isOrderSubmitted === 3 &&
+                    <>
+                        Sorry, something went wrong... :/
+                    </>
                 }
             </div>
         </div>
     );
 }
 
-const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
+const PickUpInfo: React.FC<{totalPrice: number, submitOrder: any}> = ({totalPrice, submitOrder}) => {
 
     const [dateTime, setDateTime] = useState(new Date());
+    const color = "#00704A";
+    const user = dumpUser();
+
+    if (!user)
+        return (
+            <>
+                Please, log in first before this operation.
+            </>
+        );
+
 
     return (
         <div className="flex flex-col w-full ml-0 lg:ml-12 lg:w-3/5">
@@ -44,18 +87,18 @@ const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
                     <div className="space-x-0 lg:flex lg:space-x-4">
                         <div className="w-full lg:w-1/2">
                             <label htmlFor="firstName" className="block mb-3 font-semibold text-gray-500">First Name</label>
-                            <p>Adina</p>
+                            <p>{user.firstName}</p>
                         </div>
                         <div className="w-full lg:w-1/2 ">
                             <label htmlFor="firstName" className="block mb-3 font-semibold text-gray-500">Last Name</label>
-                            <p>Cazalens</p>
+                            <p>{user.lastName}</p>
                         </div>
                     </div>
                     <div className="mt-4">
                         <div className="w-full">
                             <label htmlFor="Address" className="block mb-3 font-semibold text-gray-500">Mocha's Address</label>
                             <div className="flex inline space-x-2">
-                                <LocationOnIcon style={{color: "#166534"}}/>
+                                <LocationOnIcon style={{color: "#00704A"}}/>
                                 <p>12 rue bellecour, 69002, Lyon</p>
                             </div>
                         </div>
@@ -67,7 +110,8 @@ const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
                             <label htmlFor="Address" className="block mb-3 font-semibold text-gray-500">Pick-up date</label>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DateTimePicker
-                                    renderInput={(props: any) => <TextField {...props} />}
+                                    renderInput={(props: any) =>
+                                        <TextField sx={{svg: {color: color}, input: {color: color}, label: {color: color}}} {...props} />}
                                     value={dateTime}
                                     onChange={(newValue: any) => {
                                         setDateTime(newValue);
@@ -78,10 +122,12 @@ const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
                     </div>
 
                     <div
-                        className="justify-self-center md:w-full py-4 text-lg font-semibold lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
+                        className="justify-self-center text-emerald-800 md:w-full py-4 text-lg font-semibold lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
                         Total {totalPrice}€</div>
                     <div className="mt-4">
                         <button
+                            type="button"
+                            onClick={submitOrder}
                             className="w-full rounded-full px-6 py-2 text-white bg-gray-800 hover:bg-green-800">Process
                         </button>
                     </div>
@@ -91,26 +137,23 @@ const PickUpInfo: React.FC<{totalPrice: number}> = ({totalPrice}) => {
     );
 }
 
-const SummaryOrder: React.FC<Array<ICustomProductProps>> = (props) => {
-
-    const [storedCommands, setStoredCommands] = useState(Object.values(props));
-
+const SummaryOrder: React.FC<{storedCommands: Array<ICustomProductProps>, setStoredCommands: any, isReadOnlyMode: boolean}> = (props) => {
 
     const deleteOrder = (id: string) => {
-        const newStoredCommands: Array<ICustomProductProps> = Object.assign([], storedCommands);
-        const toDelete: number = newStoredCommands.findIndex((product) => product.id === id);
+        const newStoredCommands: Array<ICustomProductProps> = Object.assign([], props.storedCommands);
+        const toDelete: number = newStoredCommands.findIndex((product) => product.productId === id);
 
         if (newStoredCommands[toDelete].quantity === 1) {
             newStoredCommands.splice(toDelete, 1);
         } else {
             newStoredCommands[toDelete].quantity -= 1;
         }
-        setStoredCommands(newStoredCommands);
+        props.setStoredCommands(newStoredCommands);
         localStorage.setItem("commands", JSON.stringify(newStoredCommands));
     }
 
-    for (let i = 0; i < storedCommands.length; i ++) {
-        storedCommands[i].removeItem = (e: any) => {deleteOrder(storedCommands[i].id)};
+    for (let i = 0; i < props.storedCommands.length; i ++) {
+        props.storedCommands[i].removeItem = (e: any) => {deleteOrder(props.storedCommands[i].productId)};
     }
 
     return (
@@ -118,17 +161,17 @@ const SummaryOrder: React.FC<Array<ICustomProductProps>> = (props) => {
             <div className="md:overflow-auto md:h-full grid place-items-center lg:place-items-start pt-12 lg:pt-0 2xl:ps-4">
 
 
-                {!storedCommands.length &&
+                {!props.storedCommands.length &&
                     <Empty />
                 }
 
-                {storedCommands.length > 0 &&
+                {props.storedCommands.length > 0 &&
                     <>
                         <h2 className="text-xl font-bold justify-self-center lg:justify-self-start">Order Summary</h2>
                         <ul className="mt-8 space-y-6">
-                            {storedCommands.map((order, index) =>
+                            {props.storedCommands.map((order, index) =>
                                 <li key={index}>
-                                    <Order {...order} />
+                                    <Order readOnlyMode={props.isReadOnlyMode} {...order} />
                                 </li>
                             )}
                         </ul>
@@ -156,6 +199,6 @@ function Empty() {
 
 const getTotal = (storedCommands: Array<ICustomProductProps>) => {
     return (storedCommands || []).reduce((currentValue, nextValue) => {
-        return currentValue + nextValue.quantity * nextValue.price;
+        return currentValue + nextValue.price;
     }, 0)
 };

@@ -1,5 +1,7 @@
 import {FunctionComponent, useState} from "react";
 import {Input} from "./Input";
+import {getUserInfo, login, register} from "../services/user.services";
+import {AxiosResponse} from "axios";
 
 const AuthForm: React.FC<{FormComponent: FunctionComponent}> = ({FormComponent}) => {
 
@@ -21,51 +23,69 @@ const AuthForm: React.FC<{FormComponent: FunctionComponent}> = ({FormComponent})
     );
 }
 
-export function Login() {
 
-    const LoginForm:React.FC<{}> = () => {
+export const Login: React.FC<{}> = () => {
+
+    const RegisterForm: React.FC<{}> = () => {
+
+        const [emailChanged, setEmail] = useState("");
+        const [passwordChanged, setPassword] = useState("");
+
+        const handleSubmit = (e: any) => { // TODO: alert with successfully register
+
+            console.log("on submit....")
+
+            login({email: emailChanged, password: passwordChanged})
+                .then((response: AxiosResponse) => {
+                    const token = response.data.token;
+                    localStorage.setItem("token", token);
+                    getUserInfo(token)
+                        .then((response: AxiosResponse) => {
+                            localStorage.setItem("user", JSON.stringify(response.data));
+                            console.log("user", response.data)
+                        }).catch ((err: any) => {console.log("Unable to retrieve user info ; refresh token.")})
+                })
+                .catch((err: any) => {console.log("oh no", err);})
+        }
+
         return (
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20 space-y-6">
 
-                <FacebookButton />
+                <FacebookButton/>
 
-                <div className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
+                <div
+                    className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
                     <p className="text-center font-semibold mx-4 mb-0 text-gray-800">OR</p>
                 </div>
 
                 <h2 className="text-3xl font-medium text-gray-800">Log in</h2>
 
                 <form>
-                    <Input isRequired={true} label={"Email"} onChange={() => {}} type={"email"} />
-                    <Input isRequired={true} label={"Password"} onChange={() => {}} type={"password"} />
+
+                    <Input isRequired={true} label={"Email"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
+                    <Input isRequired={true} label={"Password"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
 
                     <div className="flex justify-between items-center py-2">
-
                         <button
-                            type="submit"
+                            type="button"
+                            onClick={handleSubmit}
                             className="px-7 bg-gray-800 text-white font-medium text-sm leading-snug uppercase rounded-full shadow-md hover:bg-green-900 hover:shadow-lg focus:bg-green-900 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out py-3"
                         >
                             Sign in
                         </button>
-                        <a href="#!"
-                           className="text-green-800 font-medium hover:text-green-900 focus:text-green-900 active:text-emerald-900 duration-200 transition ease-in-out">
-                            Forgot password?</a>
-
                     </div>
-
-                    <a
-                        href="/register"
-                        className="font-medium py-4">
-                        Doesn't have an account ? <span className="text-green-800 pr-4">Register</span>
-                    </a>
-
                 </form>
+
+                <a
+                    href="/register"
+                    className="font-medium py-4">
+                    No account yet ? <span className="text-green-800 pr-4">Register</span>
+                </a>
             </div>
         );
     }
-
     return (
-        <AuthForm FormComponent={LoginForm}/>
+        <AuthForm FormComponent={RegisterForm} />
     );
 }
 
@@ -78,6 +98,15 @@ export const Register: React.FC<{}> = () => {
         const [passwordChanged, setPassword] = useState("");
         const [firstName, setFirstName] = useState("");
         const [lastName, setLastName] = useState("");
+
+        const handleSubmit = (e: any) => { // TODO: alert with successfully register
+
+            console.log("on submit....")
+
+            register({email: emailChanged, firstName: firstName, lastName: lastName, password: passwordChanged})
+                .then((response: AxiosResponse) => { console.log("Wesh", response.data); })
+                .catch((err: any) => {console.log("oh no", err);})
+        }
 
         return (
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20 space-y-6">
@@ -101,14 +130,13 @@ export const Register: React.FC<{}> = () => {
                             setLastName(e.target.value);
                         }} type={"text"}/>
                     </div>
-                    <Input isRequired={true} label={"Email"} onChange={() => {
-                    }} type={"email"}/>
-                    <Input isRequired={true} label={"Password"} onChange={() => {
-                    }} type={"password"}/>
+                    <Input isRequired={true} label={"Email"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
+                    <Input isRequired={true} label={"Password"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
 
                     <div className="flex justify-between items-center py-2">
                         <button
-                            type="submit"
+                            type="button"
+                            onClick={handleSubmit}
                             className="px-7 bg-gray-800 text-white font-medium text-sm leading-snug uppercase rounded-full shadow-md hover:bg-green-900 hover:shadow-lg focus:bg-green-900 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out py-3"
                         >
                             Sign up
