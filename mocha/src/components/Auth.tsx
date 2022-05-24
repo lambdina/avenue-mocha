@@ -3,6 +3,7 @@ import {Input} from "./Input";
 import {getUserInfo, login, register} from "../services/user.services";
 import {AxiosResponse} from "axios";
 import { useNavigate } from "react-router-dom";
+import CoffeeCup from "../assets/cupofcoffee.png";
 
 const AuthForm: React.FC<{FormComponent: FunctionComponent}> = ({FormComponent}) => {
 
@@ -12,9 +13,8 @@ const AuthForm: React.FC<{FormComponent: FunctionComponent}> = ({FormComponent})
                 <div className="flex justify-center items-center h-full text-gray-800">
                     <div className="md:w-8/12 lg:w-1/3 mb-12 md:mb-0">
                         <img
-                            src="http://assets.stickpng.com/images/580b57fcd9996e24bc43c54b.png"
+                            src={CoffeeCup}
                             className="h-1/2"
-                            alt="Phone image"
                         />
                     </div>
                     <FormComponent />

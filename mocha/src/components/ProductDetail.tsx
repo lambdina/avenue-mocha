@@ -6,6 +6,7 @@ import {ToggleButton} from "./ToggleButton";
 import {CounterButton} from "./CounterButton";
 import {getStoredCommands, getStoredCommandsWithId} from "../helpers/Product.helpers";
 
+
 const ProductImage: React.FC<{imageSrc: string, imageAlt: string}> = ({imageSrc, imageAlt}) => {
     return (
 

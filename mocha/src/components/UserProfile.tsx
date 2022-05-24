@@ -158,7 +158,7 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
                 <Order readOnlyMode={true} {...storedCommands[0]} />
                 {storedCommands.length > 1 &&
                     <ul className="">
-                        {storedCommands.map((order: ICustomProductProps) => (
+                        {storedCommands.slice(1).map((order: ICustomProductProps) => (
                             <TinyOrder id={order.productId} />
                         ))}
                     </ul>
