@@ -1,12 +1,17 @@
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Product} from "./Product";
 import {IProductProps, products} from "../types/Product.types";
-import {Outlet} from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import {Banner} from "./Banner";
+import axios, {AxiosResponse} from "axios";
+import {API_URL} from "../services/api.services.url";
 
 
 export function ProductList() {
+
+
+
     return (
         <div className="bg-white">
             <Banner />

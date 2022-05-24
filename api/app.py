@@ -3,7 +3,7 @@ import os
 import time
 from uuid import uuid4
 
-from flask import Flask, abort, request, jsonify, g, url_for
+from flask import Flask, abort, request, jsonify, g, url_for, redirect, make_response
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
@@ -22,6 +22,9 @@ app = Flask(__name__, static_url_path='', static_folder='./static')
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+
+CLIENT_URL = "http://localhost:3000"
+
 CORS(app)
 
 # extensions
@@ -173,8 +176,10 @@ def facebook_auth():
         db.session.add(user)
         db.session.commit()
     localToken = user.generate_auth_token(600000)
+    response = make_response(redirect(CLIENT_URL))
+    response.set_cookie('token', localToken.decode('ascii'))
 
-    return jsonify("token", localToken.decode('ascii'))
+    return response
 
 @app.route('/google/')
 def google():
@@ -215,8 +220,11 @@ def google_auth():
         db.session.add(user)
         db.session.commit()
     localToken = user.generate_auth_token(600000)
+    response = make_response(redirect(CLIENT_URL))
+    response.set_cookie('token', localToken.decode('ascii'))
 
-    return jsonify("token", localToken.decode('ascii'))
+    return response
+
 
 
 @app.route('/api/users', methods=['GET'])
