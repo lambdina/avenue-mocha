@@ -18,11 +18,11 @@ export const Order: React.FC<IOrder> = (props) => {
         <div>
             {props.quantity > 1 &&
                 <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center font-semibold bg-gray-600 text-white">
-                    x{props.quantity}
+                    className="w-10 h-10 rounded-full border border-emerald-800 flex items-center justify-center font-semibold bg-white text-emerald-800">
+                    x {props.quantity}
                 </div>
             }
-            <div className="container w-full md:h-48 rounded-md shadow shadow-lg p-2 lg:p-0">
+            <div className="container w-full md:h-48 rounded-md shadow shadow-lg p-2 px-4 lg:p-0 lg:px-0">
                 {productInfo &&
                     <div className="grid grid-cols-1 md:flex md:justify-evenly md:space-x-6">
                         <img className="justify-self-start md:w-40 md:h-40"

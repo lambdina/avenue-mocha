@@ -48,7 +48,7 @@ const AuthProvider: React.FC<{Component: FunctionComponent}> = ({Component}) => 
 function App() {
     return (
         <div className="App">
-            <header>
+            <header className="pb-12">
                 <AuthProvider Component={ResponsiveNavBar} />
             </header>
             <BrowserRouter>

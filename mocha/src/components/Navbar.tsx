@@ -2,15 +2,14 @@ import React, {useState} from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {getStoredCommands} from "../helpers/Product.helpers";
 import {dumpUser, IUserData} from "../services/user.services";
+import Cookies from "js-cookie";
 
 export const ResponsiveNavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const user = dumpUser();
 
-    console.log("in Navbar, user is...", user);
-
     return (
-        <div className="bg-white md:p-4 p-2.5">
+        <div className="fixed top-0 z-10 w-full bg-white py-2.5 shadow shadow-lg">
             <Navbar user={user} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>
             {menuOpen &&
                 <MobileMenu user={user} />}
@@ -43,19 +42,33 @@ const Navbar: React.FC <NavbarProps> = (props) => (
 
 const NavLinks: React.FC<{user: IUserData | undefined}> = ({user}) => {
 
+    const Logout = (e: any) => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        Cookies.remove("token");
+        window.location.reload();
+    }
+
     return (
         <>
             <li className={"list-none"}>
                 {!user &&
-                    <a className="no-underlinetext-gray-800 font-semibold hover:text-gray-600" href="/login">Login</a>
+                    <a className="flex no-underlinetext-gray-800 font-semibold hover:text-gray-600 pt-2" href="/login">Login</a>
                 }
                 {user &&
-                    <a className="flex no-underlinetext-gray-800 font-semibold hover:text-gray-600 space-x-4" href="/profile">
+                    <a className="flex no-underline text-gray-800 font-semibold hover:text-gray-600 space-x-4" href="/profile">
                         <img className="w-9 h-9 object-cover rounded-full"
                             src={user.avatar_path} />
-                        <span className="pt-2">Profile</span>
                     </a>
                 }
+
+            </li>
+            <li className="list-none pt-2">
+
+                {user &&
+                    <button className="flex font-semibold hover:text-gray-600" onClick={Logout}>Log out</button>
+                }
+
             </li>
             <li className="list-none pt-2">
                 <a className="flex no-underline text-gray-800 font-semibold hover:text-gray-600" href="/checkout/">

@@ -16,7 +16,7 @@ export const Product: React.FC<IProductProps> = (props: IProductProps) => {
                <img
                    src={props.imageSrc}
                    alt={props.imageAlt}
-                   className="w-full h-full object-center object-cover transition duration-200 transform hover:scale-110"
+                   className="w-full h-full object-center transition duration-200 transform hover:scale-110"
                />
            </div>
 

@@ -58,8 +58,9 @@ export function Checkout() {
             {isOrderSubmitted === 2 &&
                 <div className="grid grid-cols-1 justify-center place-items-center space-y-4">
                     <h2 className="justify-self-center text-xl lg:text-3xl font-medium">Successfully submitted !</h2>
-                    <img src="https://video-public.canva.com/VAEU_ZS7KAI/v/c4c47bd6bd.gif" />
-                    <p className="font-medium text-emerald-800 px-4">Thanks for choosing Mocha! You can now pick up your order in 12 minutes.</p>
+                    <img className="h-40"
+                        src="https://video-public.canva.com/VAEU_ZS7KAI/v/c4c47bd6bd.gif" />
+                    <p className="justify-self-center font-medium text-emerald-800 px-4">Thanks for choosing Mocha! You can now pick up your order in 12 minutes.</p>
                     <div className="lg:pt-6">
                         <SummaryOrder isReadOnlyMode={true} storedCommands={storedCommands} setStoredCommands={setStoredCommand} />
                     </div>

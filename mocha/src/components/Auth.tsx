@@ -79,8 +79,8 @@ export const Login: React.FC<{}> = () => {
 
                 <form>
 
-                    <Input isRequired={true} label={"Email"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
-                    <Input isRequired={true} label={"Password"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
+                    <Input isRequired={true} label={"Email"} placeholder={"john.Doe@epitech.eu"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
+                    <Input isRequired={true} label={"Password"} placeholder={"*******"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
 
                     <div className="flex justify-between items-center py-2">
                         <button
@@ -157,15 +157,15 @@ export const Register: React.FC<{}> = () => {
                 <form>
 
                     <div className="grid xl:grid-cols-2 xl:gap-6">
-                        <Input isRequired={false} label={"First name"} onChange={(e: any) => {
+                        <Input isRequired={false} label={"First name"} placeholder={"John"} onChange={(e: any) => {
                             setFirstName(e.target.value);
                         }} type={"text"}/>
-                        <Input isRequired={false} label={"Last name"} onChange={(e: any) => {
+                        <Input isRequired={false} label={"Last name"} placeholder={"Doe"} onChange={(e: any) => {
                             setLastName(e.target.value);
                         }} type={"text"}/>
                     </div>
-                    <Input isRequired={true} label={"Email"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
-                    <Input isRequired={true} label={"Password"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
+                    <Input isRequired={true} label={"Email"} placeholder={"john.doe@apitech.eu"} onChange={(e: any) => {setEmail(e.target.value)}} type={"email"}/>
+                    <Input isRequired={true} label={"Password"} placeholder={"*********"} onChange={(e: any) => {setPassword(e.target.value)}} type={"password"}/>
 
                     <div className="flex justify-between items-center py-2">
                         <button

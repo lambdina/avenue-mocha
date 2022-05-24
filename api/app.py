@@ -3,7 +3,7 @@ import os
 import time
 from uuid import uuid4
 
-from flask import Flask, abort, request, jsonify, g, url_for, redirect, make_response
+from flask import Flask, abort, request, jsonify, g, url_for, redirect, make_response, send_from_directory
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
@@ -57,6 +57,9 @@ class User(Base):
         return check_password_hash(self.password_hash, password)
 
     def generate_auth_token(self, expires_in=600000):
+
+        print("time.time() + expires_in", time.time() + expires_in)
+
         return jwt.encode(
             {'id': self.id, 'exp': time.time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
@@ -220,9 +223,12 @@ def google_auth():
         db.session.add(user)
         db.session.commit()
     localToken = user.generate_auth_token(600000)
+
+    print(jwt.decode(localToken, app.config['SECRET_KEY'],
+                              algorithms=['HS256']))
+
     response = make_response(redirect(CLIENT_URL))
     response.set_cookie('token', localToken.decode('ascii'))
-
     return response
 
 
@@ -249,10 +255,10 @@ def update_user():
 
     if request.files.get("avatar_path"):
         file = request.files["avatar_path"]
-        filename = os.path.join('static', f"{uuid4()}_{file.filename}")
+        filename = os.path.join('./static', f"{uuid4()}_{file.filename}")
 
         file.save(filename)
-        user.avatar_path = filename
+        user.avatar_path = filename.replace("./static", "/static")
 
     LocalSession.commit()
     return user.to_json()
@@ -334,6 +340,9 @@ def get_all_orders():
     orders = Order.query.filter_by(user_id=user.id)
     return {"orders": [order.to_json() for order in orders]}, 200
 
+@app.route('/static/<path:path>')
+def serve_files(path):
+    return send_from_directory('static', path)
 
 if __name__ == '__main__':
     Base.metadata.drop_all(engine)

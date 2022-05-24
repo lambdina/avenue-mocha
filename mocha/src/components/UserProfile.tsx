@@ -10,13 +10,14 @@ import {ICustomProductProps} from "../types/Product.types";
 import {API_URL} from "../services/api.services.url";
 import axios, {AxiosResponse} from "axios";
 import {Empty} from "./Checkout";
+import {ResponsiveNavBar} from "./Navbar";
 
 export function UserProfile() {
 
     const [isEditingMode, setEditingMode] = useState(false);
 
     return (
-        <div className="container mx-auto my-20">
+        <div className="container mx-auto my-40">
 
             {!isEditingMode && <ReadOnlyMode isEditingMode={isEditingMode} setEditingMode={setEditingMode} /> }
             {isEditingMode && <EditingMode setEditingMode={setEditingMode} />}
@@ -81,12 +82,12 @@ const EditingMode: React.FC<{setEditingMode: any}> = ({setEditingMode}) => {
             <h2 className="text-xl font-bold">Edit profile</h2>
             <form className="flex-row justify-center items-center">
                 <div className="grid xl:grid-cols-2 xl:gap-6">
-                    <Input isRequired={false} label={"First name"} onChange={(e: any)=> {setFirstName(e.target.value);}} type={"text"} />
-                    <Input isRequired={false} label={"Last name"} onChange={(e: any)=> {setLastName(e.target.value);}} type={"text"} />
+                    <Input isRequired={false} label={"First name"} placeholder={"Blair"} onChange={(e: any)=> {setFirstName(e.target.value);}} type={"text"} />
+                    <Input isRequired={false} label={"Last name"} placeholder={"Waldorf"} onChange={(e: any)=> {setLastName(e.target.value);}} type={"text"} />
                 </div>
                 <UploadFileButton label={"Change avatar"} onChange={(e: any) => {setAvatar(e.target.files[0]);}} />
-                <Input isRequired={false} label={"New Email"} type={"email"} onChange={(e: any) => {setEmail(e.target.value);}} />
-                <Input isRequired={false} label={"New Password"} type={"password"} onChange={(e: any) => {setPassword(e.target.value);}} />
+                <Input isRequired={false} label={"New Email"} placeholder={"new@email.com"} type={"email"} onChange={(e: any) => {setEmail(e.target.value);}} />
+                <Input isRequired={false} label={"New Password"} placeholder={"******"} type={"password"} onChange={(e: any) => {setPassword(e.target.value);}} />
                 <button
                     type="button"
                     onClick={handleSubmit}
@@ -131,7 +132,7 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
                 <img
                     src={user.avatar_path}
                     alt=""
-                    className="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
+                    className="object-cover rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
             </div>
 
             <div className="flex justify-self-end pr-4 font-semibold text-gray-800 hover:text-emerald-800 transition duration-200 transform hover:scale-110"
