@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   api:
@@ -7,8 +7,12 @@ services:
       - ./api:/backend
     environment:
       - FLASK_APP=app.py
+    expose:
+      - 5000
     ports:
-      - "5000:5000"
+      - 5000:5000
+    networks:
+      - internal
 
   client:
     build:
@@ -22,6 +26,14 @@ services:
       - '3000:3000'
     depends_on:
       - api
+    networks:
+      - internal
+    links:
+      - api:api
 
 volumes:
   node-modules:
+
+networks:
+  internal:
+

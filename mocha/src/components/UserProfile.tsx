@@ -102,7 +102,7 @@ const EditingMode: React.FC<{setEditingMode: any}> = ({setEditingMode}) => {
 const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({isEditingMode, setEditingMode}) => {
 
 
-    const [storedCommands, setStoredCommands] = useState([]);
+    const [storedCommands, setStoredCommands] = useState<Array<ICustomProductProps>>([]);
     const [hasAtLeastOne, setHowMany] = useState(1);
     const userToken = localStorage.getItem("token");
     const user = dumpUser();
@@ -155,7 +155,12 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
         {!isEditingMode && storedCommands.length > 0 &&
             <div className="grid grid-cols-1 p-4">
                 <p className="justify-self-center lg:pb-8 text-xl items-center font-semibold text-gray-800">Last orders</p>
-                <Order readOnlyMode={true} storedCommands[0] />
+                {storedCommands[0] &&
+                    <Order readOnlyMode={true} isCold={storedCommands[0].isCold}
+                           productId={storedCommands[0].productId} isCreamy={storedCommands[0].isCreamy}
+                           quantity={storedCommands[0].quantity} nbSugars={storedCommands[0].nbSugars} nbIces={storedCommands[0].nbIces}
+                           price={storedCommands[0].price} size={storedCommands[0].size}/>
+                }
                 {storedCommands.length > 1 &&
                     <ul className="">
                         {storedCommands.slice(1).map((order: ICustomProductProps) => (

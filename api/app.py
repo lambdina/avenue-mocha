@@ -348,4 +348,4 @@ if __name__ == '__main__':
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     migrate.init_app(app, db)
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port='5000',  debug=True)
