@@ -155,7 +155,7 @@ const ReadOnlyMode: React.FC<{isEditingMode: boolean, setEditingMode: any}> = ({
         {!isEditingMode && storedCommands.length > 0 &&
             <div className="grid grid-cols-1 p-4">
                 <p className="justify-self-center lg:pb-8 text-xl items-center font-semibold text-gray-800">Last orders</p>
-                <Order readOnlyMode={true} {...storedCommands[0]} />
+                <Order readOnlyMode={true} storedCommands[0] />
                 {storedCommands.length > 1 &&
                     <ul className="">
                         {storedCommands.slice(1).map((order: ICustomProductProps) => (
